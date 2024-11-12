@@ -41,7 +41,7 @@ class layout_grid extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-await filePickerService.requestStoragePermission();
+      await filePickerService.requestStoragePermission();
             },
             child: _buildFeature(
               context: context,
