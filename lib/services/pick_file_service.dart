@@ -1,8 +1,12 @@
 // lib/services/file_picker_service.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printify/provider/file_provider.dart';
+import 'package:printify/screens/image_preview.dart';
+import 'package:printify/screens/sample.dart';
 import 'package:provider/provider.dart'; // Import provider
 import 'package:printify/screens/file_preview_screen.dart'; // Import the preview screen
 
@@ -52,42 +56,69 @@ class PickerService {
     );
   }
 
-Future<void> pickImageFromGallery() async {
-  print("Attempting to pick image from gallery...");
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['jpeg', 'png'],
-  );
+// Future<void> pickImageFromGallery() async {
+//   print("Attempting to pick image from gallery...");
+//   FilePickerResult? result = await FilePicker.platform.pickFiles(
+//     type: FileType.custom,
+//     allowedExtensions: ['jpeg', 'png'],
+//   );
 
-  if (result != null) {
-    String? filePath = result.files.single.path;
-    print("Selected image path: $filePath");
-  } else {
-    print("No image selected");
+//   if (result != null) {
+//     String? filePath = result.files.single.path;
+//     print("Selected image path: $filePath");
+//   } else {
+//     print("No image selected");
+//   }
+// }
+
+  Future<void> pickImageFromGallery(BuildContext context) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpeg', 'png'],
+    );
+
+    if (result != null) {
+      String? filePath = result.files.single.path;
+      if (filePath != null) {
+        File imageFile = File(filePath);
+
+        // Save the selected file in Provider
+        Provider.of<FileProvider>(context, listen: false).setImage(imageFile);
+
+        // Navigate to PreviewImageScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PreviewImageScreen()),
+        );
+      }
+    } else {
+      print("No image selected");
+    }
   }
-}
 
-Future<void> requestStoragePermission() async {
-  print("Checking storage permissions...");
-  var storagePermission = await Permission.storage.status;
-  var manageExternalStoragePermission = await Permission.manageExternalStorage.status;
+  Future<void> requestStoragePermission(BuildContext context) async {
+    print("Checking storage permissions...");
+    var storagePermission = await Permission.storage.status;
+    var manageExternalStoragePermission =
+        await Permission.manageExternalStorage.status;
 
-  if (!storagePermission.isGranted && !manageExternalStoragePermission.isGranted) {
-    print("Requesting storage permissions...");
-    var result = await [
-      Permission.storage,
-      Permission.manageExternalStorage,
-    ].request();
+    if (!storagePermission.isGranted &&
+        !manageExternalStoragePermission.isGranted) {
+      print("Requesting storage permissions...");
+      var result = await [
+        Permission.storage,
+        Permission.manageExternalStorage,
+      ].request();
 
-    print("Permission result: $result");
+      print("Permission result: $result");
+    }
+
+    if (await Permission.storage.isGranted ||
+        await Permission.manageExternalStorage.isGranted) {
+      print("Permission granted, opening gallery...");
+      pickImageFromGallery(context);
+    } else {
+      print("Storage permission denied");
+    }
   }
-
-  if (await Permission.storage.isGranted || await Permission.manageExternalStorage.isGranted) {
-    print("Permission granted, opening gallery...");
-    pickImageFromGallery();
-  } else {
-    print("Storage permission denied");
-  }
-}
-
 }

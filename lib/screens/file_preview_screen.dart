@@ -1,4 +1,3 @@
-
 // lib/screens/preview_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -25,10 +24,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
     _initializePdfController();
   }
 
-void _initializePdfController() {
+  void _initializePdfController() {
     final file = Provider.of<FileProvider>(context, listen: false).selectedFile;
-    
-    if (file != null && file.path != null && file.extension?.toLowerCase() == 'pdf') {
+
+    if (file != null &&
+        file.path != null &&
+        file.extension?.toLowerCase() == 'pdf') {
       _pdfController = PdfControllerPinch(
         document: PdfDocument.openFile(file.path!),
       );
@@ -42,6 +43,7 @@ void _initializePdfController() {
       });
     }
   }
+
   @override
   void dispose() {
     _pdfController.dispose();
@@ -54,15 +56,9 @@ void _initializePdfController() {
 
     if (file == null) {
       return const Scaffold(
-        appBar: CustomAppBar(title: "Print Preview",
-         ),
-         
-        // appBar: AppBar(
-
-        //   title: const Text("Print Preview"),
-        //   backgroundColor: Color.fromARGB(255, 254, 110, 0),
-        //   centerTitle: true,
-        // ),
+        appBar: CustomAppBar(
+          title: "Print Preview",
+        ),
         body: Center(child: Text("No file selected")),
       );
     }
@@ -79,7 +75,6 @@ void _initializePdfController() {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: DeviceDimensions.screenHeight(context) * 0.04),
-             
               Container(
                 height: DeviceDimensions.screenHeight(context) * 0.7,
                 width: DeviceDimensions.screenWidth(context) * 0.9,
@@ -87,23 +82,21 @@ void _initializePdfController() {
                   color: Color.fromARGB(255, 254, 110, 0).withOpacity(0.3),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
-          BoxShadow(
-        color: Colors.grey.withOpacity(0.5), // Shadow color with opacity
-        spreadRadius: 5,  // How far the shadow spreads
-        blurRadius: 7,    // Softness of the shadow
-        offset: Offset(0, 3), // Position of the shadow (x, y)
-      ),
-        ],
+                    BoxShadow(
+                      color: Colors.grey
+                          .withOpacity(0.5), // Shadow color with opacity
+                      spreadRadius: 5, // How far the shadow spreads
+                      blurRadius: 7, // Softness of the shadow
+                      offset: Offset(0, 3), // Position of the shadow (x, y)
+                    ),
+                  ],
                 ),
                 child: _buildPreview(context, fileExtension),
               ),
               SizedBox(height: DeviceDimensions.screenHeight(context) * 0.02),
-             
               if (fileExtension == 'pdf') _buildPageIndicator(),
               SizedBox(height: DeviceDimensions.screenHeight(context) * 0.02),
               _printButton(),
-              
-              
             ],
           ),
         ),
@@ -115,7 +108,8 @@ void _initializePdfController() {
     final file = Provider.of<FileProvider>(context, listen: false).selectedFile;
 
     if (file?.path == null) {
-      return const Center(child: Text("Unable to load file. File path is missing"));
+      return const Center(
+          child: Text("Unable to load file. File path is missing"));
     }
     if (fileExtension == 'pdf') {
       try {
@@ -151,17 +145,21 @@ void _initializePdfController() {
       return const Text("Unsupported file format");
     }
   }
- Widget _buildPageIndicator() {
+
+  Widget _buildPageIndicator() {
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       decoration: BoxDecoration(
-        color:const Color.fromARGB(255, 252, 176, 119),
+        color: const Color.fromARGB(255, 252, 176, 119),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(
         'Page $_currentPage of $_totalPages',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: DeviceDimensions.responsiveSize(context) * 0.03),
+        style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: DeviceDimensions.responsiveSize(context) * 0.03),
       ),
     );
   }
@@ -173,18 +171,20 @@ void _initializePdfController() {
       margin: const EdgeInsets.only(top: 10.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       decoration: BoxDecoration(
-        color:const  Color.fromARGB(255, 254, 110, 0),
+        color: const Color.fromARGB(255, 254, 110, 0),
         borderRadius: BorderRadius.circular(8.0),
-        
       ),
-      child:  GestureDetector(
-        onTap:() {
+      child: InkWell(
+        onTap: () {
           Navigator.pushNamed(context, '/connect-printer');
         },
         child: Center(
-          child:  Text(
+          child: Text(
             'Print',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: DeviceDimensions.responsiveSize(context) * 0.05),
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: DeviceDimensions.responsiveSize(context) * 0.05),
           ),
         ),
       ),

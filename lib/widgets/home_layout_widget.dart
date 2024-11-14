@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:printify/responsive/device_dimensions.dart';
 import 'package:printify/services/pick_file_service.dart';
 
-
 class layout_grid extends StatelessWidget {
   const layout_grid({
     super.key,
@@ -14,9 +13,8 @@ class layout_grid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final filePickerService = PickerService(); // Create an instance of the service to pick files
-   
-
+    final filePickerService =
+        PickerService(); // Create an instance of the service to pick files
 
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
@@ -27,7 +25,7 @@ class layout_grid extends StatelessWidget {
         childAspectRatio: 1.4,
         children: [
           GestureDetector(
-            onTap: (){
+            onTap: () {
               filePickerService.pickFile(context);
             },
             child: _buildFeature(
@@ -41,7 +39,7 @@ class layout_grid extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-      await filePickerService.requestStoragePermission();
+              await filePickerService.requestStoragePermission(context);
             },
             child: _buildFeature(
               context: context,
@@ -156,5 +154,3 @@ class layout_grid extends StatelessWidget {
     );
   }
 }
-
-
